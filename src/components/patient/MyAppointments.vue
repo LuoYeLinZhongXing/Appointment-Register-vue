@@ -268,14 +268,14 @@ const refreshAppointments = async () => {
 
     console.log('开始获取患者订单列表')
 
-    // 调用真实API
+    // 调用真实 API
     const response = await orderApi.getPatientOrders()
-    console.log('API响应:', response)
+    console.log('API 响应:', response)
 
-    // 处理API响应数据
+    // 处理 API 响应数据
     let rawData = []
     if (response && response.data) {
-      // 如果是Result包装的对象
+      // 如果是 Result 包装的对象
       rawData = Array.isArray(response.data) ? response.data : [response.data]
     } else if (Array.isArray(response)) {
       // 如果直接返回数组
@@ -285,22 +285,26 @@ const refreshAppointments = async () => {
       rawData = [response]
     } else {
       // 如果都没有数据，使用模拟数据作为后备
-      console.log('API无数据返回，使用模拟数据')
-      appointments.value = getMockAppointments()
+      console.log('API 无数据返回，使用模拟数据')
+      appointments.value = getMockAppointments().filter(
+        item => item.orderStatus !== 4 && item.orderStatus !== 5
+      )
       return
     }
 
-    // 处理数据格式，确保字段名一致
-    appointments.value = rawData.map(item => ({
-      ...item,
-      // 如果API返回的字段名不同，这里进行映射
-      scheduleDate: item.createTime ? item.createTime.split(' ')[0] : '',
-      timePeriod: 'morning', // 这个字段API可能没有返回，需要后续补充
-      doctorId: item.doctorId || 1,
-      deptId: item.deptId || 1,
-      slotId: item.slotId || 1,
-      patientId: item.patientId || 1
-    }))
+    // 处理数据格式，确保字段名一致并过滤掉状态为 4 或 5 的订单
+    appointments.value = rawData
+      .filter(item => item.orderStatus !== 4 && item.orderStatus !== 5)
+      .map(item => ({
+        ...item,
+        // 如果 API 返回的字段名不同，这里进行映射
+        scheduleDate: item.createTime ? item.createTime.split(' ')[0] : '',
+        timePeriod: 'morning', // 这个字段 API 可能没有返回，需要后续补充
+        doctorId: item.doctorId || 1,
+        deptId: item.deptId || 1,
+        slotId: item.slotId || 1,
+        patientId: item.patientId || 1
+      }))
 
     console.log('处理后的预约列表:', appointments.value)
     ElMessage.success('刷新成功')
@@ -308,8 +312,10 @@ const refreshAppointments = async () => {
   } catch (error) {
     console.error('获取预约列表失败:', error)
     ElMessage.error('获取预约列表失败，使用模拟数据')
-    // 出错时使用模拟数据
-    appointments.value = getMockAppointments()
+    // 出错时使用模拟数据（同样过滤掉状态为 4 或 5 的订单）
+    appointments.value = getMockAppointments().filter(
+      item => item.orderStatus !== 4 && item.orderStatus !== 5
+    )
   } finally {
     loading.value = false
   }

@@ -320,6 +320,17 @@
               </div>
             </div>
 
+            <div class="form-group">
+              <label for="doctor-token">令牌 *</label>
+              <input
+                  type="text"
+                  id="doctor-token"
+                  v-model="registerForm.doctor.token"
+                  placeholder="请输入令牌"
+                  required
+              >
+            </div>
+
             <div class="form-row">
               <div class="form-group half">
                 <label for="doctor-post">职位 *</label>
@@ -438,6 +449,17 @@
                 >
               </div>
             </div>
+
+            <div class="form-group">
+              <label for="admin-token">令牌 *</label>
+              <input
+                  type="text"
+                  id="admin-token"
+                  v-model="registerForm.admin.token"
+                  placeholder="请输入令牌"
+                  required
+              >
+            </div>
           </template>
 
           <div v-if="registerPasswordMismatch" class="password-error">
@@ -535,7 +557,8 @@ export default {
         card: '',
         post: '',
         deptId: '',
-        introduction: ''
+        introduction: '',
+        token: ''
       },
       admin: {
         name: '',
@@ -543,7 +566,8 @@ export default {
         password: '',
         confirmPassword: '',
         gender: '',
-        card: ''
+        card: '',
+        token: ''
       }
     })
 
@@ -827,7 +851,8 @@ export default {
               card: currentForm.card,
               post: parseInt(currentForm.post),
               deptId: parseInt(currentForm.deptId),
-              introduction: currentForm.introduction
+              introduction: currentForm.introduction,
+              token: currentForm.token
             })
             break
           case 'admin':
@@ -836,7 +861,8 @@ export default {
               phone: currentForm.phone,
               password: currentForm.password,
               gender: parseInt(currentForm.gender),
-              card: currentForm.card
+              card: currentForm.card,
+              token: currentForm.token
             })
             break
         }
@@ -947,6 +973,7 @@ export default {
       registerForm.doctor.post = ''
       registerForm.doctor.deptId = ''
       registerForm.doctor.introduction = ''
+      registerForm.doctor.token = ''
 
       // 重置管理员表单
       registerForm.admin.name = ''
@@ -955,6 +982,7 @@ export default {
       registerForm.admin.confirmPassword = ''
       registerForm.admin.gender = ''
       registerForm.admin.card = ''
+      registerForm.admin.token = ''
     }
 
     // 生命周期 - 移除了自动加载科室数据的调用
