@@ -652,15 +652,21 @@ export default {
         console.log('response.data:', response.data)
         console.log('response.data.token:', response.data?.token)
 
+        // 检查是否有错误码和 msg
+        if (response.code === 500 && response.msg) {
+          showError(response.msg)
+          return
+        }
+
         // 从正确的嵌套结构中提取数据
         const token = response.data?.token
         const userInfo = response.data?.[currentRole.value]
 
-        console.log('提取的token:', token)
+        console.log('提取的 token:', token)
         console.log('用户信息:', userInfo)
 
         if (!token) {
-          showError('登录失败：未获取到有效的token')
+          showError('登录失败：未获取到有效的 token')
           return
         }
 
@@ -669,12 +675,12 @@ export default {
         localStorage.setItem('userInfo', JSON.stringify(userInfo))
         localStorage.setItem('userRole', currentRole.value)
 
-        console.log('成功存储token，长度:', token.length)
+        console.log('成功存储 token，长度:', token.length)
 
         // 根据不同角色跳转到对应页面
         switch(currentRole.value) {
           case 'admin':
-            router.push('/') // 管理员跳转到工作台界面
+            router.push('/dashboard') // 管理员跳转到控制台
             break
           case 'doctor':
             router.push('/doctor') // 医生跳转到医生界面
@@ -683,7 +689,7 @@ export default {
             router.push('/patient') // 患者跳转到患者界面
             break
           default:
-            router.push('/') // 默认跳转到工作台
+            router.push('/dashboard') // 默认跳转到工作台
         }
 
       } catch (error) {
@@ -876,6 +882,15 @@ export default {
     const showError = (message) => {
       errorMessage.value = message
       showErrorModal.value = true
+    }
+
+    const showMessage = (message) => {
+      // 使用 alert 显示成功消息
+      alert(message)
+      // 延迟返回登录页面
+      setTimeout(() => {
+        showRegisterForm.value = false
+      }, 100)
     }
 
     const closeErrorModal = () => {
