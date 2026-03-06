@@ -868,21 +868,29 @@ export default {
         }
 
         console.log('注册成功:', result)
-        showMessage(`${roleTitles[currentRole.value]}注册成功！`)
-        showRegisterForm.value = false
-        // 重置表单
-        currentForm.name = ''
-        currentForm.phone = ''
-        currentForm.password = ''
-        currentForm.confirmPassword = ''
-        currentForm.gender = ''
-        currentForm.card = ''
-        if (currentRole.value === 'patient') {
-          currentForm.email = ''
-        } else if (currentRole.value === 'doctor') {
-          currentForm.post = ''
-          currentForm.deptId = ''
-          currentForm.introduction = ''
+
+        // 检查响应码，只有 code 为 200 或 0 才表示成功
+        if (result && (result.code === 200 || result.code === 0 || result.success)) {
+          showMessage(`${roleTitles[currentRole.value]}注册成功！`)
+          showRegisterForm.value = false
+          // 重置表单
+          currentForm.name = ''
+          currentForm.phone = ''
+          currentForm.password = ''
+          currentForm.confirmPassword = ''
+          currentForm.gender = ''
+          currentForm.card = ''
+          if (currentRole.value === 'patient') {
+            currentForm.email = ''
+          } else if (currentRole.value === 'doctor') {
+            currentForm.post = ''
+            currentForm.deptId = ''
+            currentForm.introduction = ''
+          }
+        } else {
+          // 注册失败的提示
+          const errorMsg = result?.msg || result?.message || '注册失败，请检查输入信息'
+          showError(errorMsg)
         }
 
       } catch (error) {
